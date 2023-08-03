@@ -1,5 +1,6 @@
 import {
   TripsStyledItem,
+  TripsWrapBtn,
   TripsWrapImg,
   TripsImg,
   TripsContentWrap,
@@ -12,17 +13,19 @@ export const TripsItem = ({
 }) => {
   return (
     <TripsStyledItem>
-      <TripsWrapImg>
-        <TripsImg src={imageUrl} alt={name} />
-      </TripsWrapImg>
-      <TripsContentWrap>
-        <TripsTitle>{name}</TripsTitle>
+      <TripsWrapBtn type="button">
+        <TripsWrapImg>
+          <TripsImg src={imageUrl} alt={name} />
+        </TripsWrapImg>
+        <TripsContentWrap>
+          <TripsTitle>{name}</TripsTitle>
 
-        <TripsDate>{`${formatRequestDate(
-          startTime,
-          'toPoints'
-        )} - ${formatRequestDate(endTime, 'toPoints')}`}</TripsDate>
-      </TripsContentWrap>
+          <TripsDate>{`${formatRequestDate(
+            startTime,
+            'toPoints'
+          )} - ${formatRequestDate(endTime, 'toPoints')}`}</TripsDate>
+        </TripsContentWrap>
+      </TripsWrapBtn>
     </TripsStyledItem>
   );
 };
