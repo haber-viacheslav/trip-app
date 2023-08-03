@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 export const TripsStyledItem = styled.li`
   width: 200px;
+  flex: 0 0 200px;
   background-color: ${props => props.theme.colors.clearWhite};
   box-shadow: ${props => props.theme.shadows.mainShadow};
 `;
