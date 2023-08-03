@@ -1,15 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { formatRequestDate } from 'helpers/formatRequestDate';
-export const AddForm = ({ cities }) => {
+export const AddForm = ({ cities, onClick, addTrip }) => {
   const [selectedCity, setSelectedCity] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
+  const [isVerify, setIsVerify] = useState(false);
   const now = new Date();
   const maxDate = new Date(now.getTime() + 15 * 24 * 60 * 60 * 1000)
     .toISOString()
     .slice(0, -8);
   const minDate = now.toISOString().slice(0, -8);
-
+  useEffect(() => {
+    if (selectedCity && startTime && endTime) {
+      return setIsVerify(true);
+    } else return setIsVerify(false);
+  }, [selectedCity, startTime, endTime]);
   const handleCityChange = e => {
     console.log(e.target.value);
     setSelectedCity(e.target.value);
@@ -27,13 +32,22 @@ export const AddForm = ({ cities }) => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    const tripData = {
-      city: cities.filter(city => city.id === +selectedCity)[0].name,
-      start: new Date(startTime).getTime(),
-      end: new Date(endTime).getTime(),
+    const chosenCity = cities.filter(city => city.id === +selectedCity)[0];
+    console.log('chosenCity', chosenCity);
+
+    const newTrip = {
+      name: chosenCity.name,
+      imageUrl: chosenCity.imageUrl,
+      startTime: new Date(startTime).getTime(),
+      endTime: new Date(endTime).getTime(),
     };
-    console.log('TripData', formatRequestDate(tripData.start));
-    // В этом месте вы можете выполнить дополнительные действия при отправке формы, например, передать данные обратно в родительский компонент.
+    console.log(
+      'TripData',
+      newTrip,
+      formatRequestDate(newTrip.startTime, 'toPoints')
+    );
+    addTrip(newTrip);
+    onClick();
   };
 
   return (
@@ -71,7 +85,14 @@ export const AddForm = ({ cities }) => {
           max={maxDate}
         />
       </div>
-      <button type="submit">Готово</button>
+      <div>
+        <button type="button" onClick={onClick}>
+          Cancel
+        </button>
+        <button disabled={!isVerify} type="submit">
+          Save
+        </button>
+      </div>
     </form>
   );
 };
