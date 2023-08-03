@@ -11,9 +11,9 @@ export const TripsWrapBtn = styled.button`
   margin: 0;
   padding: 0;
   cursor: pointer;
-  transition: box-shadow 300ms;
+  transition: transform 250ms ease-in-out, box-shadow 250ms ease-in-out;
   &:hover,
-  :active {
+  &:focus {
     box-shadow: ${props => props.theme.shadows.mainShadow};
   }
 `;
@@ -31,9 +31,7 @@ export const TripsImg = styled.img`
 
 export const TripsContentWrap = styled.div`
   padding: 16px;
-  border-bottom: 1px solid ${props => props.theme.colors.lightGrey};
-  border-left: 1px solid ${props => props.theme.colors.lightGrey};
-  border-right: 1px solid ${props => props.theme.colors.lightGrey};
+  border: 1px solid ${props => props.theme.colors.lightGrey};
 `;
 
 export const TripsTitle = styled.h3`
