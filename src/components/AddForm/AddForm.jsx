@@ -6,10 +6,16 @@ export const AddForm = ({ cities, onClick, addTrip }) => {
   const [endTime, setEndTime] = useState('');
   const [isVerify, setIsVerify] = useState(false);
   const now = new Date();
-  const maxDate = new Date(now.getTime() + 15 * 24 * 60 * 60 * 1000)
+  const desiredTimeZoneDate = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+  const maxDate = new Date(
+    desiredTimeZoneDate.getTime() + 15 * 24 * 60 * 60 * 1000
+  )
     .toISOString()
     .slice(0, -8);
-  const minDate = now.toISOString().slice(0, -8);
+  const minDate = desiredTimeZoneDate.toISOString().slice(0, -8);
+  console.log('now', now.getTime());
+  console.log('minDate', minDate);
+  console.log('maxDate', maxDate);
   useEffect(() => {
     if (selectedCity && startTime && endTime) {
       return setIsVerify(true);

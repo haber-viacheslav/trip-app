@@ -1,5 +1,9 @@
 import { StyledSection } from './Section.styled';
-
-export const Section = props => {
-  return <StyledSection {...props} />;
+import { Main } from 'components/Main/Main';
+export const Section = ({ children }) => {
+  return (
+    <Main>
+      <StyledSection>{children}</StyledSection>
+    </Main>
+  );
 };
