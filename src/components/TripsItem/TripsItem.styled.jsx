@@ -5,6 +5,13 @@ export const TripsStyledItem = styled.li`
   background-color: ${props => props.theme.colors.clearWhite};
 `;
 
+export const TripsContentWrap = styled.div`
+  align-items: flex-start;
+  flex-direction: column;
+  display: flex;
+  padding: 16px;
+  border: 1px solid ${props => props.theme.colors.lightGrey};
+`;
 export const TripsWrapBtn = styled.button`
   border: none;
   background-color: transparent;
@@ -15,6 +22,9 @@ export const TripsWrapBtn = styled.button`
   &:hover,
   &:focus {
     box-shadow: ${props => props.theme.shadows.mainShadow};
+  }
+  &:focus > ${TripsContentWrap} {
+    border-color: ${props => props.theme.colors.blue};
   }
 `;
 
@@ -27,11 +37,6 @@ export const TripsImg = styled.img`
   object-fit: cover;
   height: 160px;
   width: 100%;
-`;
-
-export const TripsContentWrap = styled.div`
-  padding: 16px;
-  border: 1px solid ${props => props.theme.colors.lightGrey};
 `;
 
 export const TripsTitle = styled.h3`
