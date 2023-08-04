@@ -1,5 +1,17 @@
 import { useEffect, useState } from 'react';
 import { formatRequestDate } from 'helpers/formatRequestDate';
+import { FormButton } from 'components/buttons/FormButton';
+import { StyledFormButton } from 'components/buttons/FormButton.styled';
+import {
+  StyledForm,
+  StyledInputsContainer,
+  StyledInput,
+  StyledLabel,
+  StyledSelect,
+  StyledLabelValidation,
+  StyledButtonsContainer,
+} from './AddForm.styled';
+import { AiOutlineCheck } from 'react-icons/ai';
 export const AddForm = ({ cities, onClick, addTrip }) => {
   const [selectedCity, setSelectedCity] = useState('');
   const [startTime, setStartTime] = useState('');
@@ -13,9 +25,6 @@ export const AddForm = ({ cities, onClick, addTrip }) => {
     .toISOString()
     .slice(0, -8);
   const minDate = desiredTimeZoneDate.toISOString().slice(0, -8);
-  console.log('now', now.getTime());
-  console.log('minDate', minDate);
-  console.log('maxDate', maxDate);
   useEffect(() => {
     if (selectedCity && startTime && endTime) {
       return setIsVerify(true);
@@ -57,21 +66,39 @@ export const AddForm = ({ cities, onClick, addTrip }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="city">Please select a city</label>
-        <select id="city" value={selectedCity} onChange={handleCityChange}>
-          <option value=""></option>
+    <StyledForm onSubmit={handleSubmit}>
+      <StyledInputsContainer>
+        <StyledLabel htmlFor="city">
+          {!selectedCity ? (
+            <StyledLabelValidation>*</StyledLabelValidation>
+          ) : (
+            <AiOutlineCheck size="8" color="green" />
+          )}{' '}
+          City
+        </StyledLabel>
+        <StyledSelect
+          id="city"
+          value={selectedCity}
+          onChange={handleCityChange}
+        >
+          <option value="">Please select a city</option>
           {cities.map(city => (
             <option key={city.id} value={city.id}>
               {city.name}
             </option>
           ))}
-        </select>
-      </div>
-      <div>
-        <label htmlFor="start-time">Select date</label>
-        <input
+        </StyledSelect>
+      </StyledInputsContainer>
+      <StyledInputsContainer>
+        <StyledLabel htmlFor="start-time">
+          {!startTime ? (
+            <StyledLabelValidation>*</StyledLabelValidation>
+          ) : (
+            <AiOutlineCheck size="8" color="green" />
+          )}{' '}
+          Start date
+        </StyledLabel>
+        <StyledInput
           type="datetime-local"
           id="start-time"
           value={startTime}
@@ -79,10 +106,17 @@ export const AddForm = ({ cities, onClick, addTrip }) => {
           min={minDate}
           max={maxDate}
         />
-      </div>
-      <div>
-        <label htmlFor="end-time">Select date</label>
-        <input
+      </StyledInputsContainer>
+      <StyledInputsContainer>
+        <StyledLabel htmlFor="end-time">
+          {!endTime ? (
+            <StyledLabelValidation>*</StyledLabelValidation>
+          ) : (
+            <AiOutlineCheck size="8" color="green" />
+          )}{' '}
+          End date
+        </StyledLabel>
+        <StyledInput
           type="datetime-local"
           id="end-time"
           value={endTime}
@@ -90,15 +124,15 @@ export const AddForm = ({ cities, onClick, addTrip }) => {
           min={minDate && startTime}
           max={maxDate}
         />
-      </div>
-      <div>
-        <button type="button" onClick={onClick}>
+      </StyledInputsContainer>
+      <StyledButtonsContainer>
+        <FormButton type="button" onClick={onClick}>
           Cancel
-        </button>
-        <button disabled={!isVerify} type="submit">
+        </FormButton>
+        <StyledFormButton type="submit" disabled={!isVerify}>
           Save
-        </button>
-      </div>
-    </form>
+        </StyledFormButton>
+      </StyledButtonsContainer>
+    </StyledForm>
   );
 };

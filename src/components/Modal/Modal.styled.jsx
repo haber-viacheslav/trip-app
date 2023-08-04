@@ -16,9 +16,9 @@ export const Overlay = styled.div`
 export const ModalBody = styled.div`
   background-color: ${props => props.theme.colors.clearWhite};
   position: absolute;
-  top: 60px;
+  top: 40px;
   left: 50%;
   transform: translateX(-50%);
   width: 680px;
-  height: 540px;
+  height: 500px;
 `;

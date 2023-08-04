@@ -8,12 +8,11 @@ import {
   TripsDate,
 } from './TripsItem.styled';
 import { formatRequestDate } from 'helpers/formatRequestDate';
-export const TripsItem = ({
-  tripData: { id, name, imageUrl, startTime, endTime },
-}) => {
+export const TripsItem = ({ tripData, selectTrip }) => {
+  const { name, imageUrl, startTime, endTime } = tripData;
   return (
     <TripsStyledItem>
-      <TripsWrapBtn type="button">
+      <TripsWrapBtn type="button" onClick={selectTrip}>
         <TripsWrapImg>
           <TripsImg src={imageUrl} alt={name} />
         </TripsWrapImg>
