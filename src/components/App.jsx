@@ -17,6 +17,7 @@ import { localStorageService } from 'services/localStorageService';
 import { HiddenTitle } from './HiddenTitle/HіddenTitle';
 import { AsideForecastInfo } from './AsideInfo/AsideForecastInfo';
 import { getWeatherByDates, getWeatherByDay } from 'api/weatherApi';
+import { getTimeForTimer } from 'helpers/getTimeForTimer';
 import cities from '../mockData/cities.json';
 import { nanoid } from 'nanoid';
 import { AsideForecastCard } from './AsideForecastCard/AsideForecastCard';
@@ -44,6 +45,10 @@ export const App = () => {
     }
     return [...parsedTrips];
   });
+  if (selectedTrip) {
+    getTimeForTimer(selectedTrip.startTime);
+    console.log('selectedTrip.startTime', selectedTrip.startTime);
+  }
 
   const handleAddTrip = newTip => {
     newTip.id = nanoid();
@@ -122,11 +127,13 @@ export const App = () => {
         )}
       </Main>
       <AsideForecastInfo>
-        {forecastPerDay && (
+        {selectedTrip && forecastPerDay ? (
           <>
             <AsideForecastCard forecast={forecastPerDay} />
-            <Timer activeTrip={selectedTrip} />
+            <Timer tripTime={selectedTrip.startTime} />
           </>
+        ) : (
+          <h3>Please select your trip</h3>
         )}
       </AsideForecastInfo>
 

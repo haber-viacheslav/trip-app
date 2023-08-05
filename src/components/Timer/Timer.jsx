@@ -1,26 +1,37 @@
+import { useState, useEffect } from 'react';
 import {
   TimerStyledValue,
   TimerStyledWrp,
   TimerStyledField,
   TimerStyledLabel,
 } from './Timer.styled';
-export const Timer = () => {
+import { getTimeForTimer } from 'helpers/getTimeForTimer';
+export const Timer = ({ tripTime }) => {
+  const [timeLeft, setTimeLeft] = useState(getTimeForTimer(tripTime));
+  const { days, hours, minutes, seconds } = timeLeft;
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(getTimeForTimer(tripTime));
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [tripTime]);
   return (
     <TimerStyledWrp>
       <TimerStyledField>
-        <TimerStyledValue>00</TimerStyledValue>
+        <TimerStyledValue>{days}</TimerStyledValue>
         <TimerStyledLabel>Days</TimerStyledLabel>
       </TimerStyledField>
       <TimerStyledField>
-        <TimerStyledValue>00</TimerStyledValue>
+        <TimerStyledValue>{hours}</TimerStyledValue>
         <TimerStyledLabel>Hours</TimerStyledLabel>
       </TimerStyledField>
       <TimerStyledField>
-        <TimerStyledValue>00</TimerStyledValue>
+        <TimerStyledValue>{minutes}</TimerStyledValue>
         <TimerStyledLabel>Minutes</TimerStyledLabel>
       </TimerStyledField>
       <TimerStyledField>
-        <TimerStyledValue>00</TimerStyledValue>
+        <TimerStyledValue>{seconds}</TimerStyledValue>
         <TimerStyledLabel>Seconds</TimerStyledLabel>
       </TimerStyledField>
     </TimerStyledWrp>

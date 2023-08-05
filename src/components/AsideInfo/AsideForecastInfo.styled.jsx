@@ -12,6 +12,7 @@ export const AsideStyledForecastInfo = styled.aside`
   overflow: hidden auto;
   color: ${props => props.theme.colors.clearWhite};
   background-color: ${props => props.theme.colors.asideBgNightColor};
+  z-index: 20;
 `;
 
 export const AsideStyledForecastWrp = styled.div`

@@ -7,6 +7,7 @@ import {
   ForecastStyledImage,
   ForecastStyledTemp,
   ForecastStyledLocation,
+  ForecastStyledSup,
 } from './AsideForecastCard.styled';
 export const AsideForecastCard = ({ forecast }) => {
   console.log('forecast', forecast);
@@ -19,8 +20,14 @@ export const AsideForecastCard = ({ forecast }) => {
     <ForecastStyledWrp>
       <ForecastStyledTitle>{getDayOfWeek(datetime)}</ForecastStyledTitle>
       <ForecastStyledContentWrp>
-        <ForecastStyledImage src={weatherIcon[icon]} alt={description} />
-        <ForecastStyledTemp>{temp}&#8451;</ForecastStyledTemp>
+        <ForecastStyledImage
+          src={weatherIcon[icon]}
+          alt={description}
+          loading="lazy"
+          width="120"
+        />
+        <ForecastStyledTemp>{Math.round(temp)}</ForecastStyledTemp>
+        <ForecastStyledSup>&deg;C</ForecastStyledSup>
       </ForecastStyledContentWrp>
       <ForecastStyledLocation>{address}</ForecastStyledLocation>
     </ForecastStyledWrp>
