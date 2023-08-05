@@ -20,9 +20,10 @@ export const theme = Object.freeze({
     black: '#000000',
     blue: '#1890FF',
     darkBlue: '#100E3A',
-    lightBlue: '#4DC0B270',
+    lightBlue: '#cbf7edcc',
     transparent: 'transparent',
     currentColor: 'currentColor',
+    asideBgNightColor: '#110E3B',
   },
   shadows: {
     mainShadow: '3px 8px 14px rgba(136, 198, 253, 0.19)',

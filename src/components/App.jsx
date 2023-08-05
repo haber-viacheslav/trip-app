@@ -9,13 +9,18 @@ import { Container } from './Container/Container';
 import { Header } from './Header/Header';
 import { Search } from './Search/Search';
 import { CloseButton } from './buttons/CloseButton';
+import { Main } from 'components/Main/Main';
 import { ForecastList } from './ForecastList/ForecastList';
 import { StyledModalTitle, StyledModalHeader } from './App.styled';
 import { AiOutlineClose } from 'react-icons/ai';
 import { localStorageService } from 'services/localStorageService';
+import { HiddenTitle } from './HiddenTitle/HіddenTitle';
+import { AsideForecastInfo } from './AsideInfo/AsideForecastInfo';
 import { getWeatherByDates, getWeatherByDay } from 'api/weatherApi';
 import cities from '../mockData/cities.json';
 import { nanoid } from 'nanoid';
+import { AsideForecastCard } from './AsideForecastCard/AsideForecastCard';
+import { Timer } from './Timer/Timer';
 export const App = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
@@ -37,23 +42,32 @@ export const App = () => {
         },
       ];
     }
-    return [...parsedTrips].sort(
-      (prevTrip, nextTrip) => prevTrip.startTime - nextTrip.startTime
-    );
+    return [...parsedTrips];
   });
 
   const handleAddTrip = newTip => {
     newTip.id = nanoid();
-    setVisibleTrips(prevTrips => [...prevTrips, newTip]);
+    setVisibleTrips(prevTrips =>
+      [...prevTrips, newTip].sort(
+        (prevTrip, nextTrip) => prevTrip.startTime - nextTrip.startTime
+      )
+    );
+    setSelectedTrip(null);
+    setForecastList(null);
   };
   const handleSelectTrip = selectedTip => {
     setSelectedTrip(selectedTip);
   };
   const handleToggleIsOpen = () => {
     setIsOpen(!isOpen);
+    setSearch('');
+    setSelectedTrip(null);
+    setForecastList(null);
   };
   const handleSearchChange = e => {
     setSearch(e.currentTarget.value);
+    setSelectedTrip(null);
+    setForecastList(null);
   };
   const getVisibleTrips = () => {
     const normalizedSearch = search.toLowerCase();
@@ -73,7 +87,6 @@ export const App = () => {
       try {
         const forecastData = await getWeatherByDates(selectedTrip);
         const forecastDay = await getWeatherByDay(selectedTrip);
-
         setForecastList(forecastData);
         setForecastPerDay(forecastDay);
       } catch (error) {
@@ -83,31 +96,40 @@ export const App = () => {
       }
     };
     getWeather(selectedTrip);
-    console.log('selectedTrip', selectedTrip);
   }, [selectedTrip]);
-  console.log('forecastList', forecastList, 'forecastPerDay', forecastPerDay);
 
   return (
     <ThemeProvider theme={theme}>
       <Header />
-
-      <Section>
-        <Container>
-          <Search value={search} onChange={handleSearchChange} />
-          <TripsList
-            selectTrip={handleSelectTrip}
-            visibleTrips={getVisibleTrips()}
-            onToggle={handleToggleIsOpen}
-          />
-        </Container>
-      </Section>
-      {forecastList?.days.length > 0 && (
+      <Main>
         <Section>
           <Container>
-            <ForecastList forecastData={forecastList} />
+            <HiddenTitle text={'Trips'} />
+            <Search value={search} onChange={handleSearchChange} />
+            <TripsList
+              selectTrip={handleSelectTrip}
+              visibleTrips={getVisibleTrips()}
+              onToggle={handleToggleIsOpen}
+            />
           </Container>
         </Section>
-      )}
+        {selectedTrip && forecastList?.days.length > 0 && (
+          <Section>
+            <Container>
+              <ForecastList forecastsData={forecastList} />
+            </Container>
+          </Section>
+        )}
+      </Main>
+      <AsideForecastInfo>
+        {forecastPerDay && (
+          <>
+            <AsideForecastCard forecast={forecastPerDay} />
+            <Timer activeTrip={selectedTrip} />
+          </>
+        )}
+      </AsideForecastInfo>
+
       {isOpen && (
         <Modal onClick={handleToggleIsOpen}>
           <StyledModalHeader>

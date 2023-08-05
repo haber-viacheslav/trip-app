@@ -18,7 +18,7 @@ export const AddForm = ({ cities, onClick, addTrip }) => {
   const [endTime, setEndTime] = useState('');
   const [isVerify, setIsVerify] = useState(false);
   const now = new Date();
-  const desiredTimeZoneDate = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+  const desiredTimeZoneDate = new Date(now.getTime() + 27 * 60 * 60 * 1000);
   const maxDate = new Date(
     desiredTimeZoneDate.getTime() + 15 * 24 * 60 * 60 * 1000
   )

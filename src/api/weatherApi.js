@@ -13,7 +13,7 @@ export const getWeatherByDates = async trip => {
     const response = await axios.get(
       `${name}/${formatRequestDate(startTime)}/${formatRequestDate(
         endTime
-      )}?unitGroup=metric&include=days&key=${API_KEY}&contentType=json`
+      )}?unitGroup=metric&include=days&iconSet=icons2&key=${API_KEY}&contentType=json`
     );
     return response.data;
   } catch (error) {
@@ -24,7 +24,7 @@ export const getWeatherByDates = async trip => {
 export const getWeatherByDay = async trip => {
   try {
     const response = await axios.get(
-      `${trip.name}/today?unitGroup=metric&include=days&key=${API_KEY}&contentType=json`
+      `${trip.name}/today?unitGroup=metric&include=days&iconSet=icons2&key=${API_KEY}&contentType=json`
     );
     return response.data;
   } catch (error) {

@@ -32,6 +32,13 @@ export const StyledSelect = styled.select`
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
+  &:active,
+  &:focus {
+    border-color: ${props => props.theme.colors.blue};
+  }
+  &:hover {
+    outline: 1px solid ${props => props.theme.colors.lightGrey};
+  }
 `;
 export const StyledInput = styled.input`
   outline: none;

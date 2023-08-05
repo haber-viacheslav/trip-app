@@ -14,7 +14,7 @@ export const TripsItem = ({ tripData, selectTrip }) => {
     <TripsStyledItem>
       <TripsWrapBtn type="button" onClick={selectTrip}>
         <TripsWrapImg>
-          <TripsImg src={imageUrl} alt={name} />
+          <TripsImg src={imageUrl} alt={name} loading="lazy" width="200" />
         </TripsWrapImg>
         <TripsContentWrap>
           <TripsTitle>{name}</TripsTitle>
