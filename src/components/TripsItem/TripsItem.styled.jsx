@@ -36,7 +36,6 @@ export const TripsImg = styled.img`
   display: block;
   object-fit: cover;
   height: 160px;
-  width: 100%;
 `;
 
 export const TripsTitle = styled.h3`

@@ -5,15 +5,25 @@ import {
   ForecastImg,
   ForecastTemperature,
 } from './ForecastItem.styled';
-
-export const ForecastItem = ({ forecast }) => {
+import { weatherIcon } from 'images/images';
+import { getDayOfWeek } from 'helpers/getDayOfWeek';
+export const ForecastItem = ({
+  forecast: { datetime, icon, description, tempmax, tempmin },
+}) => {
   return (
     <ForecastStyledItem>
-      <ForecastDay></ForecastDay>
+      <ForecastDay>{getDayOfWeek(datetime)}</ForecastDay>
       <ForecastWrapImg>
-        <ForecastImg src="" alt="" />
+        <ForecastImg
+          src={weatherIcon[icon]}
+          alt={description}
+          loading="lazy"
+          width="80"
+        />
       </ForecastWrapImg>
-      <ForecastTemperature>/</ForecastTemperature>
+      <ForecastTemperature>
+        {tempmax}&deg;/{tempmin}&deg;
+      </ForecastTemperature>
     </ForecastStyledItem>
   );
 };
