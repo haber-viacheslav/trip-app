@@ -22,7 +22,7 @@ export const ForecastItem = ({
         />
       </ForecastWrapImg>
       <ForecastTemperature>
-        {tempmax}&deg;/{tempmin}&deg;
+        {Math.round(tempmax)}&deg;/{Math.round(tempmin)}&deg;
       </ForecastTemperature>
     </ForecastStyledItem>
   );

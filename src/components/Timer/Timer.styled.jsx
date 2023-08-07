@@ -22,3 +22,10 @@ export const TimerStyledValue = styled.span`
 export const TimerStyledLabel = styled.span`
   text-transform: uppercase;
 `;
+
+export const StyledTimerMessage = styled.h3`
+  text-align: center;
+  font-size: 54px;
+  padding: 82px 30px;
+  font-weight: ${props => props.theme.fontWeights.bold};
+`;
