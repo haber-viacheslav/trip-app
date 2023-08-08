@@ -34,8 +34,7 @@ import {
   addNewTrip,
   getUserTrips,
 } from 'firebaseService/firebaseApi';
-import { notify } from 'helpers/notify';
-import { weatherIcon } from 'images/images';
+
 const defaultTrip = {
   name: 'Athens',
   imageUrl:
@@ -47,15 +46,12 @@ const defaultTrip = {
 const notAuthTrips = localStorageService.getItem('notAuthorizedUserTrips');
 const authTrips = localStorageService.getItem('authorizedUserTrips');
 const user = localStorageService.getItem('user');
-console.log('must be true', authTrips && user);
-console.log(!user && !authTrips && notAuthTrips);
-console.log(!user && !authTrips && !notAuthTrips);
 
 export const App = () => {
   const [userAcc] = useAuthState(auth);
+  const [title, setTitle] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [forecastList, setForecastList] = useState(null);
   const [forecastPerDay, setForecastPerDay] = useState(null);
   const [selectedTrip, setSelectedTrip] = useState(null);
@@ -68,9 +64,6 @@ export const App = () => {
   });
   const provider = useMemo(() => new GoogleAuthProvider(), []);
 
-  console.log('visibleTrips', visibleTrips);
-  console.log('userAcc', userAcc);
-
   const handlesignInWithGoogle = async () => {
     try {
       const response = await signInWithPopup(auth, provider);
@@ -81,10 +74,10 @@ export const App = () => {
         email,
         photoURL,
       });
-
+      setTitle('Log out');
       await addNewUser(uid, displayName, email, photoURL);
     } catch (e) {
-      console.log(e.errorCode, e.errorMessage);
+      console.log(e.message);
     }
   };
 
@@ -93,17 +86,19 @@ export const App = () => {
     localStorageService.removeItem('authorizedUserTrips');
     if (!notAuthTrips) {
       localStorageService.setItem('notAuthorizedUserTrips', [defaultTrip]);
+      setTitle('Log in');
     }
     setVisibleTrips(notAuthTrips);
     try {
       await signOut(auth);
     } catch (e) {
-      console.log(e.errorCode, e.errorMessage);
+      console.log(e.message);
     }
   };
 
   const handleAddTrip = async newTip => {
     newTip.id = nanoid();
+
     if (!userAcc) {
       setVisibleTrips(prevTrips =>
         [...prevTrips, newTip].sort(
@@ -129,7 +124,7 @@ export const App = () => {
         newTip,
       ]);
     } catch (e) {
-      notify('error', e.message);
+      console.log(e.message);
     }
 
     setSelectedTrip(null);
@@ -160,10 +155,9 @@ export const App = () => {
   };
 
   useEffect(() => {
-    setIsLoading(true);
     const getAllUserTrips = async () => {
       if (!userAcc) {
-        setIsLoading(false);
+        setTitle('Log in');
         return;
       }
       try {
@@ -173,10 +167,9 @@ export const App = () => {
           ...userTrips,
           defaultTrip,
         ]);
+        setTitle('Log out');
       } catch (e) {
-        notify('error', 'Sorry, something wrong. Please try again');
-      } finally {
-        setIsLoading(false);
+        console.log(e.message);
       }
     };
     getAllUserTrips();
@@ -191,14 +184,13 @@ export const App = () => {
         const forecastDay = await getWeatherByDay(selectedTrip);
         setForecastList(forecastData);
         setForecastPerDay(forecastDay);
-      } catch (error) {
-        console.log(error);
+      } catch (e) {
+        console.log(e.message);
       }
     };
     getWeather(selectedTrip);
   }, [selectedTrip]);
-  console.log('userAcc?.user.photoURL', userAcc?.photoURL);
-  console.log('user.photoURL', user?.photoURL);
+
   return (
     <ThemeProvider theme={theme}>
       <Header />
@@ -208,13 +200,11 @@ export const App = () => {
             <HiddenTitle text={'Trips'} />
             <Search value={search} onChange={handleSearchChange} />
 
-            {!isLoading && (
-              <TripsList
-                selectTrip={handleSelectTrip}
-                visibleTrips={getVisibleTrips()}
-                onToggle={handleToggleIsOpen}
-              />
-            )}
+            <TripsList
+              selectTrip={handleSelectTrip}
+              visibleTrips={getVisibleTrips()}
+              onToggle={handleToggleIsOpen}
+            />
           </Container>
         </Section>
         {selectedTrip && forecastList?.days.length > 0 && (
@@ -226,14 +216,12 @@ export const App = () => {
         )}
       </Main>
       <AsideForecastInfo>
-        {!user ? (
-          <UserButton
-            bg={weatherIcon.penguin}
-            onClick={handlesignInWithGoogle}
-          />
-        ) : (
-          <UserButton bg={user?.photoURL} onClick={handleSignOut} />
-        )}
+        <UserButton
+          title={title}
+          variant={user?.photoURL || ''}
+          signOut={handleSignOut}
+          signIn={handlesignInWithGoogle}
+        />
 
         {selectedTrip && forecastPerDay ? (
           <>

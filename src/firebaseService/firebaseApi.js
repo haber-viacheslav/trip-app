@@ -15,7 +15,7 @@ export const addNewUser = async (uid, displayName, email, photoUrl) => {
       photoUrl,
     });
   } catch (e) {
-    console.log(e.errorCode, e.errorMessage);
+    console.log(e.message);
   }
 };
 
@@ -25,7 +25,7 @@ export const addNewTrip = async (uid, newTrip) => {
     const newPostRef = push(postListRef);
     await set(newPostRef, newTrip);
   } catch (e) {
-    console.error('Error added trip:', e);
+    console.log(e.message);
   }
 };
 
@@ -44,11 +44,10 @@ export const getUserTrips = async uid => {
 
       return tripsArray;
     } else {
-      console.log('No trips found for the user.');
       return [];
     }
   } catch (e) {
-    console.error('Error getting user trips:', e);
+    console.log(e.message);
     return [];
   }
 };
