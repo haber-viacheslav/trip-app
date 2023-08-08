@@ -9,7 +9,7 @@ export const Header = () => {
   return (
     <StyledHeader>
       <Container>
-        <StyledHeaderLogo href="/">
+        <StyledHeaderLogo href="/trip-app">
           <StyledHeaderLogoThin>Weather</StyledHeaderLogoThin> Forecast
         </StyledHeaderLogo>
       </Container>

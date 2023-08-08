@@ -1,8 +1,22 @@
 import { UserStyledButton } from './UserButton.styled';
-export const UserButton = ({ onClick, children, bg }) => {
+import { weatherIcon } from 'images/images';
+export const UserButton = ({ variant, signOut, signIn, title }) => {
+  if (title === 'Log in') {
+    return (
+      <UserStyledButton
+        title={title}
+        bg={weatherIcon.penguin}
+        type="button"
+        onClick={signIn}
+      />
+    );
+  }
   return (
-    <UserStyledButton bg={bg} type="button" onClick={onClick}>
-      {children}
-    </UserStyledButton>
+    <UserStyledButton
+      title={title}
+      bg={variant}
+      type="button"
+      onClick={signOut}
+    />
   );
 };

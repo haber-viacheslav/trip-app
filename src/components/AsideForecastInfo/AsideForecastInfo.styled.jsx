@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { weatherIcon } from 'images/images';
 
 export const AsideStyledForecastInfo = styled.aside`
   position: absolute;
@@ -13,6 +14,11 @@ export const AsideStyledForecastInfo = styled.aside`
   color: ${props => props.theme.colors.clearWhite};
   background-color: ${props => props.theme.colors.asideBgNightColor};
   z-index: 20;
+  background-image: url(${weatherIcon.bgCloud}), url(${weatherIcon.bgCloud}),
+    url(${weatherIcon.bgCloud}), url(${weatherIcon.bgCloud});
+  background-size: 450px, 230px, 300px, 440px;
+  background-position: 350px 1000px, 600px 200px, 30px 20px, -80px 820px;
+  background-repeat: no-repeat;
 `;
 
 export const AsideStyledForecastWrp = styled.div`
