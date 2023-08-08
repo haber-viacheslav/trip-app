@@ -73,31 +73,35 @@ export const TripsList = ({ visibleTrips, onToggle, selectTrip }) => {
   }, []);
 
   return (
-    <StyledTripsListWrp>
-      {visibleTrips.length > 3 && !isAtStart && (
-        <StyledPrevScrollButton onClick={handleScrollLeft}>
-          <BiSolidChevronLeft size="30" color="#100E3A" />
-        </StyledPrevScrollButton>
-      )}
-      <StyledTripsList ref={tripsRef}>
-        {visibleTrips.length > 0 &&
-          visibleTrips.map(trip => (
-            <TripsItem
-              key={trip.id}
-              tripData={trip}
-              selectTrip={() => selectTrip(trip)}
-            />
-          ))}
-        <TripsStyledAddItem>
-          <AddButton onClick={onToggle} />
-        </TripsStyledAddItem>
-      </StyledTripsList>
+    <>
+      {visibleTrips && (
+        <StyledTripsListWrp>
+          {visibleTrips.length > 3 && !isAtStart && (
+            <StyledPrevScrollButton onClick={handleScrollLeft}>
+              <BiSolidChevronLeft size="30" color="#100E3A" />
+            </StyledPrevScrollButton>
+          )}
+          <StyledTripsList ref={tripsRef}>
+            {visibleTrips.length > 0 &&
+              visibleTrips.map(trip => (
+                <TripsItem
+                  key={trip.id}
+                  tripData={trip}
+                  selectTrip={() => selectTrip(trip)}
+                />
+              ))}
+            <TripsStyledAddItem>
+              <AddButton onClick={onToggle} />
+            </TripsStyledAddItem>
+          </StyledTripsList>
 
-      {visibleTrips.length > 3 && !isAtEnd && (
-        <StyledNextScrollButton onClick={handleScrollRight}>
-          <BiSolidChevronRight size="30" color="#100E3A" />
-        </StyledNextScrollButton>
+          {visibleTrips.length > 3 && !isAtEnd && (
+            <StyledNextScrollButton onClick={handleScrollRight}>
+              <BiSolidChevronRight size="30" color="#100E3A" />
+            </StyledNextScrollButton>
+          )}
+        </StyledTripsListWrp>
       )}
-    </StyledTripsListWrp>
+    </>
   );
 };

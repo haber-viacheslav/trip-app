@@ -1,7 +1,7 @@
 import { UserStyledButton } from './UserButton.styled';
-export const UserButton = ({ onClick, children }) => {
+export const UserButton = ({ onClick, children, bg }) => {
   return (
-    <UserStyledButton type="button" onClick={onClick}>
+    <UserStyledButton bg={bg} type="button" onClick={onClick}>
       {children}
     </UserStyledButton>
   );

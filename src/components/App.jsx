@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useContext } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { theme } from '../theme/theme';
 import { ThemeProvider } from 'styled-components';
 import { AddForm } from './AddForm/AddForm';
@@ -22,83 +22,116 @@ import {
   StyledAsideMessage,
 } from './App.styled';
 import { AiOutlineClose } from 'react-icons/ai';
-import { localStorageService } from 'services/localStorageService';
 import { getWeatherByDates, getWeatherByDay } from 'api/weatherApi';
 import cities from '../mockData/cities.json';
 import { nanoid } from 'nanoid';
-import { Context } from 'index';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { useList } from 'react-firebase-hooks/database';
-import { ref, set } from 'firebase/database';
-//import { initializeApp } from 'firebase/app';
+import { localStorageService } from 'services/localStorageService';
 import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { auth } from 'firebaseService/initFirebase';
+import {
+  addNewUser,
+  addNewTrip,
+  getUserTrips,
+} from 'firebaseService/firebaseApi';
+import { notify } from 'helpers/notify';
+import { weatherIcon } from 'images/images';
+const defaultTrip = {
+  name: 'Athens',
+  imageUrl:
+    'https://res.cloudinary.com/dj6mkr2e6/image/upload/v1690896299/athens_vmn2zj.webp',
+  id: nanoid(),
+  startTime: 1692374100000,
+  endTime: 1692460500000,
+};
+const notAuthTrips = localStorageService.getItem('notAuthorizedUserTrips');
+const authTrips = localStorageService.getItem('authorizedUserTrips');
+const user = localStorageService.getItem('user');
+console.log('must be true', authTrips && user);
+console.log(!user && !authTrips && notAuthTrips);
+console.log(!user && !authTrips && !notAuthTrips);
+
 export const App = () => {
+  const [userAcc] = useAuthState(auth);
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
-  // const [user, setUser] = useState(null);
-  // const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [forecastList, setForecastList] = useState(null);
   const [forecastPerDay, setForecastPerDay] = useState(null);
   const [selectedTrip, setSelectedTrip] = useState(null);
   const [visibleTrips, setVisibleTrips] = useState(() => {
-    const parsedTrips = localStorageService.getItem('trips');
-    if (!parsedTrips) {
-      return [
-        {
-          name: 'Athens',
-          imageUrl:
-            'https://res.cloudinary.com/dj6mkr2e6/image/upload/v1690896299/athens_vmn2zj.webp',
-          id: nanoid(),
-          startTime: 1692374100000,
-          endTime: 1692460500000,
-        },
-      ];
-    }
-    return [...parsedTrips];
+    if (authTrips && user) {
+      return [...authTrips];
+    } else if (!user && !authTrips && notAuthTrips) {
+      return [...notAuthTrips];
+    } else if (!user && !authTrips && !notAuthTrips) return [defaultTrip];
   });
   const provider = useMemo(() => new GoogleAuthProvider(), []);
 
-  const { auth, database } = useContext(Context);
-  const [userAcc] = useAuthState(auth);
-
+  console.log('visibleTrips', visibleTrips);
   console.log('userAcc', userAcc);
 
-  const signInWithGoogle = async () => {
+  const handlesignInWithGoogle = async () => {
     try {
       const response = await signInWithPopup(auth, provider);
-      // const { displayName, email, photoURL, accessToken, uid } = response.user;
-      // setUser({ displayName, email, photoURL, accessToken, uid });
+      const { uid, displayName, email, photoURL } = response.user;
+      localStorageService.setItem('user', {
+        uid,
+        displayName,
+        email,
+        photoURL,
+      });
+
+      await addNewUser(uid, displayName, email, photoURL);
     } catch (e) {
       console.log(e.errorCode, e.errorMessage);
     }
   };
 
   const handleSignOut = async () => {
+    localStorageService.removeItem('user');
+    localStorageService.removeItem('authorizedUserTrips');
+    if (!notAuthTrips) {
+      localStorageService.setItem('notAuthorizedUserTrips', [defaultTrip]);
+    }
+    setVisibleTrips(notAuthTrips);
     try {
-      signOut(auth);
-      // setUser(null);
+      await signOut(auth);
     } catch (e) {
       console.log(e.errorCode, e.errorMessage);
     }
   };
 
-  function writeUserData(userId, name, email, imageUrl) {
-    set(ref(database, 'users/' + userId), {
-      username: name,
-      email: email,
-      profile_picture: imageUrl,
-    });
-  }
-
-  const handleAddTrip = newTip => {
+  const handleAddTrip = async newTip => {
     newTip.id = nanoid();
-    setVisibleTrips(prevTrips =>
-      [...prevTrips, newTip].sort(
-        (prevTrip, nextTrip) => prevTrip.startTime - nextTrip.startTime
-      )
-    );
-    const { displayName, email, photoURL, accessToken, uid } = userAcc;
-    writeUserData(uid, displayName, email, photoURL);
+    if (!userAcc) {
+      setVisibleTrips(prevTrips =>
+        [...prevTrips, newTip].sort(
+          (prevTrip, nextTrip) => prevTrip.startTime - nextTrip.startTime
+        )
+      );
+      localStorageService.setItem('notAuthorizedUserTrips', [
+        ...visibleTrips,
+        newTip,
+      ]);
+      return;
+    }
+
+    try {
+      await addNewTrip(userAcc.uid, newTip);
+      setVisibleTrips(prevTrips =>
+        [...prevTrips, newTip].sort(
+          (prevTrip, nextTrip) => prevTrip.startTime - nextTrip.startTime
+        )
+      );
+      localStorageService.setItem('authorizedUserTrips', [
+        ...visibleTrips,
+        newTip,
+      ]);
+    } catch (e) {
+      notify('error', e.message);
+    }
+
     setSelectedTrip(null);
     setForecastList(null);
   };
@@ -117,31 +150,41 @@ export const App = () => {
     setForecastList(null);
   };
   const getVisibleTrips = () => {
-    const normalizedSearch = search.toLowerCase();
-    return visibleTrips.filter(visibleTrip =>
-      visibleTrip.name.toLowerCase().includes(normalizedSearch)
-    );
+    if (search) {
+      const normalizedSearch = search.toLowerCase();
+      return visibleTrips.filter(visibleTrip =>
+        visibleTrip.name.toLowerCase().includes(normalizedSearch)
+      );
+    }
+    return visibleTrips;
   };
-  // useEffect(() => {
-  //   const unsubscribe = auth.onAuthStateChanged(userData => {
-  //     if (userData) {
-  //       const { displayName, email, photoURL, accessToken, uid } = userData;
-  //       console.log('userData', userData);
 
-  //       setUser({ displayName, email, photoURL, accessToken, uid });
-  //     }
-  //     // setUser(null);
-  //   });
-  //   return unsubscribe;
-  // }, [provider, user]);
   useEffect(() => {
-    localStorageService.setItem('trips', visibleTrips);
-  }, [visibleTrips]);
+    setIsLoading(true);
+    const getAllUserTrips = async () => {
+      if (!userAcc) {
+        setIsLoading(false);
+        return;
+      }
+      try {
+        const userTrips = await getUserTrips(userAcc.uid);
+        setVisibleTrips([...userTrips, defaultTrip]);
+        localStorageService.setItem('authorizedUserTrips', [
+          ...userTrips,
+          defaultTrip,
+        ]);
+      } catch (e) {
+        notify('error', 'Sorry, something wrong. Please try again');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    getAllUserTrips();
+  }, [userAcc]);
   useEffect(() => {
     if (!selectedTrip) {
       return;
     }
-
     const getWeather = async selectedTrip => {
       try {
         const forecastData = await getWeatherByDates(selectedTrip);
@@ -154,7 +197,8 @@ export const App = () => {
     };
     getWeather(selectedTrip);
   }, [selectedTrip]);
-
+  console.log('userAcc?.user.photoURL', userAcc?.photoURL);
+  console.log('user.photoURL', user?.photoURL);
   return (
     <ThemeProvider theme={theme}>
       <Header />
@@ -163,11 +207,14 @@ export const App = () => {
           <Container>
             <HiddenTitle text={'Trips'} />
             <Search value={search} onChange={handleSearchChange} />
-            <TripsList
-              selectTrip={handleSelectTrip}
-              visibleTrips={getVisibleTrips()}
-              onToggle={handleToggleIsOpen}
-            />
+
+            {!isLoading && (
+              <TripsList
+                selectTrip={handleSelectTrip}
+                visibleTrips={getVisibleTrips()}
+                onToggle={handleToggleIsOpen}
+              />
+            )}
           </Container>
         </Section>
         {selectedTrip && forecastList?.days.length > 0 && (
@@ -179,10 +226,13 @@ export const App = () => {
         )}
       </Main>
       <AsideForecastInfo>
-        {!userAcc ? (
-          <UserButton onClick={signInWithGoogle} />
+        {!user ? (
+          <UserButton
+            bg={weatherIcon.penguin}
+            onClick={handlesignInWithGoogle}
+          />
         ) : (
-          <UserButton onClick={handleSignOut} />
+          <UserButton bg={user?.photoURL} onClick={handleSignOut} />
         )}
 
         {selectedTrip && forecastPerDay ? (

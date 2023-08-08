@@ -7,6 +7,7 @@ import snowfall from './weather/snowfall.png';
 import sunny from './weather/sunny.png';
 import thunderstorm from './weather/thunderstorm.png';
 import wind from './weather/wind.png';
+import penguin from './penguin.png';
 
 export const weatherIcon = {
   'partly-cloudy-day': partlyCloudy,
@@ -19,4 +20,5 @@ export const weatherIcon = {
   'showers-day': rainfall,
   'thunder-rain': thunderstorm,
   'thunder-showers-day': thunderstorm,
+  penguin,
 };
