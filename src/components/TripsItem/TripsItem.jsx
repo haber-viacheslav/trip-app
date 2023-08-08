@@ -7,9 +7,11 @@ import {
   TripsTitle,
   TripsDate,
 } from './TripsItem.styled';
+import { trimStringForCards } from 'helpers/trimStringForCards';
 import { formatRequestDate } from 'helpers/formatRequestDate';
 export const TripsItem = ({ tripData, selectTrip }) => {
   const { name, imageUrl, startTime, endTime } = tripData;
+ 
   return (
     <TripsStyledItem>
       <TripsWrapBtn type="button" onClick={selectTrip}>
@@ -17,7 +19,7 @@ export const TripsItem = ({ tripData, selectTrip }) => {
           <TripsImg src={imageUrl} alt={name} loading="lazy" width="200" />
         </TripsWrapImg>
         <TripsContentWrap>
-          <TripsTitle>{name}</TripsTitle>
+          <TripsTitle>{trimStringForCards(name, ', Ukraine')}</TripsTitle>
 
           <TripsDate>{`${formatRequestDate(
             startTime,

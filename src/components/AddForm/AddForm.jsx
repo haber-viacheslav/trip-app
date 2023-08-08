@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { formatRequestDate } from 'helpers/formatRequestDate';
 import { FormButton } from 'components/buttons/FormButton';
 import { StyledFormButton } from 'components/buttons/FormButton.styled';
 import {
@@ -31,36 +30,26 @@ export const AddForm = ({ cities, onClick, addTrip }) => {
     } else return setIsVerify(false);
   }, [selectedCity, startTime, endTime]);
   const handleCityChange = e => {
-    console.log(e.target.value);
     setSelectedCity(e.target.value);
   };
 
   const handleStartTimeChange = e => {
-    console.log(e.target.value);
     setStartTime(e.target.value);
   };
 
   const handleEndTimeChange = e => {
-    console.log(e.target.value);
     setEndTime(e.target.value);
   };
 
   const handleSubmit = e => {
     e.preventDefault();
     const chosenCity = cities.filter(city => city.id === +selectedCity)[0];
-    console.log('chosenCity', chosenCity);
-
     const newTrip = {
       name: chosenCity.name,
       imageUrl: chosenCity.imageUrl,
       startTime: new Date(startTime).getTime(),
       endTime: new Date(endTime).getTime(),
     };
-    console.log(
-      'TripData',
-      newTrip,
-      formatRequestDate(newTrip.startTime, 'toPoints')
-    );
     addTrip(newTrip);
     onClick();
   };

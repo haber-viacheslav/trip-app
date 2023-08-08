@@ -9,12 +9,11 @@ import {
   ForecastStyledLocation,
   ForecastStyledSup,
 } from './AsideForecastCard.styled';
+import { trimStringForCards } from 'helpers/trimStringForCards';
 export const AsideForecastCard = ({ forecast }) => {
-  console.log('forecast', forecast);
   const { days, address } = forecast;
   const dayForecastData = days[0];
   const { temp, icon, datetime, description } = dayForecastData;
-  console.log('icon', icon);
 
   return (
     <ForecastStyledWrp>
@@ -29,7 +28,9 @@ export const AsideForecastCard = ({ forecast }) => {
         <ForecastStyledTemp>{Math.round(temp)}</ForecastStyledTemp>
         <ForecastStyledSup>&deg;C</ForecastStyledSup>
       </ForecastStyledContentWrp>
-      <ForecastStyledLocation>{address}</ForecastStyledLocation>
+      <ForecastStyledLocation>
+        {trimStringForCards(address, ', Ukraine')}
+      </ForecastStyledLocation>
     </ForecastStyledWrp>
   );
 };

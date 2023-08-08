@@ -4,7 +4,7 @@ export const AsideStyledForecastInfo = styled.aside`
   position: absolute;
   top: 0;
   right: 0;
-  width: 40%;
+  width: 30%;
   height: 100vh;
   display: flex;
   justify-content: center;

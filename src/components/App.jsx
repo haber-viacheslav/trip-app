@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { theme } from '../theme/theme';
 import { ThemeProvider } from 'styled-components';
 import { AddForm } from './AddForm/AddForm';
@@ -10,53 +10,128 @@ import { Header } from './Header/Header';
 import { Search } from './Search/Search';
 import { CloseButton } from './buttons/CloseButton';
 import { Main } from 'components/Main/Main';
-import { ForecastList } from './ForecastList/ForecastList';
-import { StyledModalTitle, StyledModalHeader } from './App.styled';
-import { AiOutlineClose } from 'react-icons/ai';
-import { localStorageService } from 'services/localStorageService';
+import { AsideForecastCard } from './AsideForecastCard/AsideForecastCard';
 import { HiddenTitle } from './HiddenTitle/HіddenTitle';
-import { AsideForecastInfo } from './AsideInfo/AsideForecastInfo';
+import { UserButton } from 'components/buttons/UserButton';
+import { AsideForecastInfo } from './AsideForecastInfo/AsideForecastInfo';
+import { ForecastList } from './ForecastList/ForecastList';
+import { Timer } from './Timer/Timer';
+import {
+  StyledModalTitle,
+  StyledModalHeader,
+  StyledAsideMessage,
+} from './App.styled';
+import { AiOutlineClose } from 'react-icons/ai';
 import { getWeatherByDates, getWeatherByDay } from 'api/weatherApi';
-import { getTimeForTimer } from 'helpers/getTimeForTimer';
 import cities from '../mockData/cities.json';
 import { nanoid } from 'nanoid';
-import { AsideForecastCard } from './AsideForecastCard/AsideForecastCard';
-import { Timer } from './Timer/Timer';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { localStorageService } from 'services/localStorageService';
+import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { auth } from 'firebaseService/initFirebase';
+import {
+  addNewUser,
+  addNewTrip,
+  getUserTrips,
+} from 'firebaseService/firebaseApi';
+import { notify } from 'helpers/notify';
+import { weatherIcon } from 'images/images';
+const defaultTrip = {
+  name: 'Athens',
+  imageUrl:
+    'https://res.cloudinary.com/dj6mkr2e6/image/upload/v1690896299/athens_vmn2zj.webp',
+  id: nanoid(),
+  startTime: 1692374100000,
+  endTime: 1692460500000,
+};
+const notAuthTrips = localStorageService.getItem('notAuthorizedUserTrips');
+const authTrips = localStorageService.getItem('authorizedUserTrips');
+const user = localStorageService.getItem('user');
+console.log('must be true', authTrips && user);
+console.log(!user && !authTrips && notAuthTrips);
+console.log(!user && !authTrips && !notAuthTrips);
+
 export const App = () => {
+  const [userAcc] = useAuthState(auth);
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
-  // const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [forecastList, setForecastList] = useState(null);
   const [forecastPerDay, setForecastPerDay] = useState(null);
   const [selectedTrip, setSelectedTrip] = useState(null);
   const [visibleTrips, setVisibleTrips] = useState(() => {
-    const parsedTrips = localStorageService.getItem('trips');
-    if (!parsedTrips) {
-      return [
-        {
-          name: 'Athens',
-          imageUrl:
-            'https://res.cloudinary.com/dj6mkr2e6/image/upload/v1690896299/athens_vmn2zj.webp',
-          id: nanoid(),
-          startTime: 1692374100000,
-          endTime: 1692460500000,
-        },
-      ];
-    }
-    return [...parsedTrips];
+    if (authTrips && user) {
+      return [...authTrips];
+    } else if (!user && !authTrips && notAuthTrips) {
+      return [...notAuthTrips];
+    } else if (!user && !authTrips && !notAuthTrips) return [defaultTrip];
   });
-  if (selectedTrip) {
-    getTimeForTimer(selectedTrip.startTime);
-    console.log('selectedTrip.startTime', selectedTrip.startTime);
-  }
+  const provider = useMemo(() => new GoogleAuthProvider(), []);
 
-  const handleAddTrip = newTip => {
+  console.log('visibleTrips', visibleTrips);
+  console.log('userAcc', userAcc);
+
+  const handlesignInWithGoogle = async () => {
+    try {
+      const response = await signInWithPopup(auth, provider);
+      const { uid, displayName, email, photoURL } = response.user;
+      localStorageService.setItem('user', {
+        uid,
+        displayName,
+        email,
+        photoURL,
+      });
+
+      await addNewUser(uid, displayName, email, photoURL);
+    } catch (e) {
+      console.log(e.errorCode, e.errorMessage);
+    }
+  };
+
+  const handleSignOut = async () => {
+    localStorageService.removeItem('user');
+    localStorageService.removeItem('authorizedUserTrips');
+    if (!notAuthTrips) {
+      localStorageService.setItem('notAuthorizedUserTrips', [defaultTrip]);
+    }
+    setVisibleTrips(notAuthTrips);
+    try {
+      await signOut(auth);
+    } catch (e) {
+      console.log(e.errorCode, e.errorMessage);
+    }
+  };
+
+  const handleAddTrip = async newTip => {
     newTip.id = nanoid();
-    setVisibleTrips(prevTrips =>
-      [...prevTrips, newTip].sort(
-        (prevTrip, nextTrip) => prevTrip.startTime - nextTrip.startTime
-      )
-    );
+    if (!userAcc) {
+      setVisibleTrips(prevTrips =>
+        [...prevTrips, newTip].sort(
+          (prevTrip, nextTrip) => prevTrip.startTime - nextTrip.startTime
+        )
+      );
+      localStorageService.setItem('notAuthorizedUserTrips', [
+        ...visibleTrips,
+        newTip,
+      ]);
+      return;
+    }
+
+    try {
+      await addNewTrip(userAcc.uid, newTip);
+      setVisibleTrips(prevTrips =>
+        [...prevTrips, newTip].sort(
+          (prevTrip, nextTrip) => prevTrip.startTime - nextTrip.startTime
+        )
+      );
+      localStorageService.setItem('authorizedUserTrips', [
+        ...visibleTrips,
+        newTip,
+      ]);
+    } catch (e) {
+      notify('error', e.message);
+    }
+
     setSelectedTrip(null);
     setForecastList(null);
   };
@@ -75,19 +150,41 @@ export const App = () => {
     setForecastList(null);
   };
   const getVisibleTrips = () => {
-    const normalizedSearch = search.toLowerCase();
-    return visibleTrips.filter(visibleTrip =>
-      visibleTrip.name.toLowerCase().includes(normalizedSearch)
-    );
+    if (search) {
+      const normalizedSearch = search.toLowerCase();
+      return visibleTrips.filter(visibleTrip =>
+        visibleTrip.name.toLowerCase().includes(normalizedSearch)
+      );
+    }
+    return visibleTrips;
   };
+
   useEffect(() => {
-    localStorageService.setItem('trips', visibleTrips);
-  }, [visibleTrips]);
+    setIsLoading(true);
+    const getAllUserTrips = async () => {
+      if (!userAcc) {
+        setIsLoading(false);
+        return;
+      }
+      try {
+        const userTrips = await getUserTrips(userAcc.uid);
+        setVisibleTrips([...userTrips, defaultTrip]);
+        localStorageService.setItem('authorizedUserTrips', [
+          ...userTrips,
+          defaultTrip,
+        ]);
+      } catch (e) {
+        notify('error', 'Sorry, something wrong. Please try again');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    getAllUserTrips();
+  }, [userAcc]);
   useEffect(() => {
     if (!selectedTrip) {
       return;
     }
-    // setIsLoading(true);
     const getWeather = async selectedTrip => {
       try {
         const forecastData = await getWeatherByDates(selectedTrip);
@@ -96,13 +193,12 @@ export const App = () => {
         setForecastPerDay(forecastDay);
       } catch (error) {
         console.log(error);
-      } finally {
-        // setIsLoading(false);
       }
     };
     getWeather(selectedTrip);
   }, [selectedTrip]);
-
+  console.log('userAcc?.user.photoURL', userAcc?.photoURL);
+  console.log('user.photoURL', user?.photoURL);
   return (
     <ThemeProvider theme={theme}>
       <Header />
@@ -111,11 +207,14 @@ export const App = () => {
           <Container>
             <HiddenTitle text={'Trips'} />
             <Search value={search} onChange={handleSearchChange} />
-            <TripsList
-              selectTrip={handleSelectTrip}
-              visibleTrips={getVisibleTrips()}
-              onToggle={handleToggleIsOpen}
-            />
+
+            {!isLoading && (
+              <TripsList
+                selectTrip={handleSelectTrip}
+                visibleTrips={getVisibleTrips()}
+                onToggle={handleToggleIsOpen}
+              />
+            )}
           </Container>
         </Section>
         {selectedTrip && forecastList?.days.length > 0 && (
@@ -127,13 +226,24 @@ export const App = () => {
         )}
       </Main>
       <AsideForecastInfo>
+        {!user ? (
+          <UserButton
+            bg={weatherIcon.penguin}
+            onClick={handlesignInWithGoogle}
+          />
+        ) : (
+          <UserButton bg={user?.photoURL} onClick={handleSignOut} />
+        )}
+
         {selectedTrip && forecastPerDay ? (
           <>
             <AsideForecastCard forecast={forecastPerDay} />
             <Timer tripTime={selectedTrip.startTime} />
           </>
         ) : (
-          <h3>Please select your trip</h3>
+          <StyledAsideMessage>
+            Please select your trip to check the weather forecast.
+          </StyledAsideMessage>
         )}
       </AsideForecastInfo>
 
