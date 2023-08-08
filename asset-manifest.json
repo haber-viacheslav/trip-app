@@ -1,15 +1,16 @@
 {
   "files": {
-    "main.css": "/trip-app/static/css/main.c908fb15.css",
-    "main.js": "/trip-app/static/js/main.c852cff0.js",
+    "main.css": "/trip-app/static/css/main.e82cdf50.css",
+    "main.js": "/trip-app/static/js/main.cfe5e1f3.js",
+    "static/media/penguin.png": "/trip-app/static/media/penguin.9705551b0cf9d17fe792.png",
     "static/media/fog.png": "/trip-app/static/media/fog.fa457d1ed062f284f482.png",
     "static/media/wind.png": "/trip-app/static/media/wind.3a03d9345f3bd620970c.png",
     "index.html": "/trip-app/index.html",
-    "main.c908fb15.css.map": "/trip-app/static/css/main.c908fb15.css.map",
-    "main.c852cff0.js.map": "/trip-app/static/js/main.c852cff0.js.map"
+    "main.e82cdf50.css.map": "/trip-app/static/css/main.e82cdf50.css.map",
+    "main.cfe5e1f3.js.map": "/trip-app/static/js/main.cfe5e1f3.js.map"
   },
   "entrypoints": [
-    "static/css/main.c908fb15.css",
-    "static/js/main.c852cff0.js"
+    "static/css/main.e82cdf50.css",
+    "static/js/main.cfe5e1f3.js"
   ]
 }
