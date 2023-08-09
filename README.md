@@ -1,6 +1,6 @@
 # trip-app
 
-## Trip app with countdown timer and weather forecast test task for Reenbit Travel
+## Trip app with countdown timer and weather forecast test task for Reenbit
 
 <div align="center" id="top"> 
   <img src="./.github/app.gif" alt="Trip App" />
@@ -59,16 +59,11 @@ App!
 
 ## :sparkles: Features
 
-Features User authentication using Google account Adding, editing, and viewing
-trip details Fetching and displaying weather information for selected trip dates
-Countdown timer for each trip User-friendly and intuitive interface Tech Stack
-React: Frontend library for building user interfaces Axios: Promise-based HTTP
-client for making API requests Firebase: Cloud-based platform for building
-mobile and web applications React Firebase Hooks: Library for using Firebase
-with React hooks Modern Normalize: CSS normalization library for consistent
-styling nanoid: Library for generating unique IDs React Icons: Icon library for
-React applications React Toastify: Library for displaying toast notifications
-Styled Components: CSS-in-JS library for styling React components
+- User authentication using Google account Adding and viewing trip details
+- Fetching and displaying weather information for selected trip dates
+- Countdown timer for each trip
+- User-friendly and intuitive interface
+- Horizontal scroll
 
 ## :rocket: Technologies
 
