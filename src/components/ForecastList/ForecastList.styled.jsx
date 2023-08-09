@@ -1,7 +1,10 @@
 import styled from 'styled-components';
 
 export const ForecastStyledListWrp = styled.div`
-  width: 840px;
+  width: 580px;
+  @media screen and (${props => props.theme.media.laptopL}) {
+    width: 840px;
+  }
 `;
 export const ForecastStyledTitle = styled.h2`
   font-size: 20px;

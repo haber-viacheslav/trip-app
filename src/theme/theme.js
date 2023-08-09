@@ -31,4 +31,10 @@ export const theme = Object.freeze({
     thirdShadow: '2px 3px 4px rgba(136, 198, 253, 0.4)',
     scrollBtnShadow: ' inset 2px 4px 6px rgba(255, 255, 255, 0.8)',
   },
+  media: {
+    laptop: '(min-width: 1024px)',
+    laptopM: '(min-width: 1200px)',
+    laptopL: '(min-width: 1440px)',
+    laptopXl: '(min-width: 1540px)',
+  },
 });

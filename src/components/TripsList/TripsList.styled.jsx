@@ -2,7 +2,18 @@ import styled from 'styled-components';
 
 export const StyledTripsListWrp = styled.div`
   position: relative;
-  width: 920px;
+  width: 480px;
+
+  @media screen and (${props => props.theme.media.laptop}) {
+    width: 480px;
+  }
+  @media screen and (${props => props.theme.media.laptopM}) {
+    width: 680px;
+  }
+
+  @media screen and (${props => props.theme.media.laptopXl}) {
+    width: 920px;
+  }
 `;
 export const StyledTripsList = styled.ul`
   display: flex;
@@ -10,6 +21,8 @@ export const StyledTripsList = styled.ul`
   align-items: center;
   white-space: nowrap;
   overflow-x: hidden;
+  @media screen and (${props => props.theme.media.laptopL}) {
+  }
 `;
 
 export const StyledPrevScrollButton = styled.button`
