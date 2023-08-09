@@ -4,7 +4,7 @@ export const TimerStyledWrp = styled.div`
   color: ${props => props.theme.colors.clearWhite};
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 20px;
   padding: 40px;
 `;
 export const TimerStyledField = styled.div`

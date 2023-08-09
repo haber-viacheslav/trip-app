@@ -5,7 +5,7 @@ export const AsideStyledForecastInfo = styled.aside`
   position: absolute;
   top: 0;
   right: 0;
-  width: 30%;
+  width: 35%;
   height: 100vh;
   display: flex;
   justify-content: center;
@@ -17,7 +17,7 @@ export const AsideStyledForecastInfo = styled.aside`
   background-image: url(${weatherIcon.bgCloud}), url(${weatherIcon.bgCloud}),
     url(${weatherIcon.bgCloud}), url(${weatherIcon.bgCloud});
   background-size: 450px, 230px, 300px, 440px;
-  background-position: 350px 1000px, 600px 200px, 30px 20px, -80px 820px;
+  background-position: 350px 1000px, 600px 250px, 30px 20px, -200px 900px;
   background-repeat: no-repeat;
 `;
 
