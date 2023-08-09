@@ -1,7 +1,3 @@
-# trip-app
-
-## Trip app with countdown timer and weather forecast test task for Reenbit
-
 <div align="center" id="top"> 
   <img src="./.github/app.gif" alt="Trip App" />
 
@@ -14,7 +10,7 @@
 </div>
 
 <h1 align="center">Trip App</h1>
-
+### Trip app with countdown timer and weather forecast test task for Reenbit
 <p align="center">
   <img alt="Github top language" src="https://img.shields.io/github/languages/top/haber-viacheslav/trip-app?color=56BEB8">
 
