@@ -105,10 +105,12 @@ export const App = () => {
           (prevTrip, nextTrip) => prevTrip.startTime - nextTrip.startTime
         )
       );
-      localStorageService.setItem('notAuthorizedUserTrips', [
-        ...visibleTrips,
-        newTip,
-      ]);
+      localStorageService.setItem(
+        'notAuthorizedUserTrips',
+        [...visibleTrips, newTip].sort(
+          (prevTrip, nextTrip) => prevTrip.startTime - nextTrip.startTime
+        )
+      );
       return;
     }
 
@@ -202,7 +204,9 @@ export const App = () => {
 
             <TripsList
               selectTrip={handleSelectTrip}
-              visibleTrips={getVisibleTrips()}
+              visibleTrips={getVisibleTrips().sort(
+                (prevTrip, nextTrip) => prevTrip.startTime - nextTrip.startTime
+              )}
               onToggle={handleToggleIsOpen}
             />
           </Container>
